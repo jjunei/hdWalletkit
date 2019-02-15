@@ -20,6 +20,7 @@ public enum Coin {
     case ripple
     case bitcoinCash
     case eos
+    case tron
     
     public var privateKeyVersion: UInt32 {
         switch self {
@@ -61,6 +62,8 @@ public enum Coin {
             return [0x1C,0xB8]
         case .ripple:
             return [0x74]
+        case .tron:
+            return [0x41]
         default:
             return [0x00]
         }
@@ -119,6 +122,8 @@ public enum Coin {
         case .bitcoinCash:
             return 145
         case .eos:
+            return 60
+        case .tron:
             return 60
         }
     }

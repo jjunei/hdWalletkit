@@ -52,6 +52,8 @@ public struct PublicKey {
             return generateEthAddress()
         case .eos:
             return generateEosAddress()
+        case .tron:
+            return generateTrxAddress()
         default :
             return generateCompressedAddress()
         }
@@ -74,9 +76,17 @@ public struct PublicKey {
         
     func generateCompressedAddress() -> String {
         let prefix = Data(coin.publicKeyHash)
-        let payload = RIPEMD160.hash(rawCompressed.sha256())
+        let payload = pubkeyHash
         let checksum = (prefix + payload).doubleSHA256.prefix(4)
         return Base58.encode(prefix + payload + checksum)
+    }
+    
+    func generateTrxAddress() -> String {
+        let prefix = Data(coin.publicKeyHash)
+        let formattedData = rawNotCompressed.dropFirst()
+        let addressData = Crypto.sha3keccak256(data: formattedData).suffix(20)
+        let checksum = (prefix + addressData).doubleSHA256.prefix(4)
+        return Base58.encode(prefix + addressData + checksum)
     }
     
     func generateEthAddress() -> String {

@@ -497,4 +497,44 @@ class AddressGenerationTests: XCTestCase {
             "EOS7znxBJ9ibQduky1Y17416hWydodg5km8rMisRLrZ3WarYMWycw"
         )
     }
+    
+    func testTronChildKeyDerivation() {
+        let entropy = Data(hex: "000102030405060708090a0b0c0d0e0f")
+        let mnemonic = Mnemonic.create(entropy: entropy)
+        let seed = Mnemonic.createSeed(mnemonic: mnemonic)
+        let wallet = Wallet.init(seed: seed, coin: Coin.tron)
+        
+        XCTAssertEqual(
+            wallet.privateKey.extended,
+            "xprv9s21ZrQH143K2XojduRLQnU8D8K59KSBoMuQKGx8dW3NBitFDMkYGiJPwZdanjZonM7eXvcEbxwuGf3RdkCyyXjsbHSkwtLnJcsZ9US42Gd"
+        )
+        
+        // m/44'/60'/0'/0
+        XCTAssertEqual(
+            wallet.bip44PrivateKey.extended,
+            "xprv9zZ5CJCDXmdQYwGPc3j33VQYAPi9quxMjTcMD9Vvm9X1gCkPiWZS73BRvebBi1yFZLia21844tvRedJq7mYuWnFBwHzvParmy2U7ns6Nyk2"
+        )
+        
+        XCTAssertEqual(
+            wallet.bip44PrivateKey.publicKey.extended,
+            "xpub6DYRboj7N9BhmRLri5G3QdMGiRYeFNgD6gXx1XuYKV3zZ15YG3sgeqVumtWjhemR3P7x9vmLe9CBKtbVkGH5LK4VxUyaQcuLNJrvdEx5MsU"
+        )
+        
+        // m/44'/60'/0'/0/0
+        let firstAccount = wallet.generateAccount(at: 0)
+        XCTAssertEqual(
+            firstAccount.address,
+            "TMzsBAuA8KodJkrGo8TJ5UxMU4z35zJYUg"
+        )
+        
+        XCTAssertEqual(
+            firstAccount.rawPublicKey,
+            "039966a68158fcf8839e7bdbc6b889d4608bd0b4afb358b073bed1d7b70dbe2f4f"
+        )
+        
+        XCTAssertEqual(
+            firstAccount.rawPrivateKey,
+            "df02cbea58239744a8a6ba328056309ae43f86fec6db45e5f782adcf38aacadf"
+        )
+    }
 }

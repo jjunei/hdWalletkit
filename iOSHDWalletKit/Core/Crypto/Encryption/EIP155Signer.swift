@@ -13,6 +13,12 @@ public struct EIP155Signer {
         let signature = try Crypto.sign(transactionHash, privateKey: privateKey.raw)
         return try signTransaction(signature: signature, rawTransaction: rawTransaction)
     }
+    
+    public func sign(_ rawTransaction: Data, privateKey: PrivateKey) throws -> Data {
+        var signature = try Crypto.sign(rawTransaction, privateKey: privateKey.raw)
+        signature[64] &= 0xFF
+        return signature
+    }
         
     private func signTransaction(signature: Data, rawTransaction: EthereumRawTransaction) throws -> Data {
         let (r, s, v) = calculateRSV(signature: signature)

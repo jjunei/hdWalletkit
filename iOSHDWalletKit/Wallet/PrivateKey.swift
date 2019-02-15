@@ -160,7 +160,8 @@ public struct PrivateKey {
     public func get() -> String {
         switch self.coin {
         case .ethereum: fallthrough
-        case .ethereumclassic:
+        case .ethereumclassic: fallthrough
+        case .tron:
             return self.raw.toHexString()
         case .eos:
             return self.eosWif()
@@ -208,6 +209,13 @@ public struct PrivateKey {
         let signer = EIP155Signer(chainId: chainId)
         let rawData = try signer.sign(rawTransaction, privateKey: self)
         let hash = rawData.toHexString().addHexPrefix()
+        return hash
+    }
+    
+    public func signatureTron(rawTransaction: Data) throws -> String {
+        let signer = EIP155Signer(chainId: 0)
+        let rawData = try signer.sign(rawTransaction, privateKey: self)
+        let hash = rawData.toHexString()
         return hash
     }
     
